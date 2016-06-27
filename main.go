@@ -2,7 +2,7 @@ package main
 
 import (
 	"encoding/json"
-	"flag"
+	flag "github.com/ogier/pflag"
 	"fmt"
 	"log"
 	"net/http"
@@ -28,7 +28,7 @@ var (
 
 const (
 	usage = `
-go-latency [-help] [-i interval] [-c count] url
+go-latency [options...] url
 
 go-latency will make a GET request to a URL and report on the timings.
 
@@ -48,14 +48,11 @@ func main() {
 	// parse flags
 	debug := flag.Bool("debug", false, "If true, you can debug this process at http://localhost:6060/debug/pprof/")
 
-	flag.BoolVar(&help, "help", helpDefault, helpUsage)
-	flag.BoolVar(&help, "h", helpDefault, helpUsage)
+	flag.BoolVarP(&help, "help", "h", helpDefault, helpUsage)
 
-	flag.Int64Var(&interval, "interval", intervalDefault, intervalUsage)
-	flag.Int64Var(&interval, "i", intervalDefault, intervalUsage)
+	flag.Int64VarP(&interval, "interval", "i",  intervalDefault, intervalUsage)
 
-	flag.Int64Var(&count, "count", countDefault, countUsage)
-	flag.Int64Var(&count, "c", countDefault, countUsage)
+	flag.Int64VarP(&count, "count", "c", countDefault, countUsage)
 
 	flag.Parse()
 
