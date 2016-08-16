@@ -10,6 +10,12 @@ It needs the new `net/http/httptrace` facility in Go 1.7.
 
 ## Usage
 
+Install the command line via:
+```shell
+$ go get -u github.com/jabley/go-latency
+```
+
+Then use it to test 4 times, with a delay of 4 seconds, connection statistics to https://github.com/:
 ```shell
 $ go-latency -c 4 -i 4 https://github.com/
 {"timestamp":"2016-08-16T15:32:55.227148206Z","url":"https://github.com/","getConn":5.0107e-05,"gotConn":0.526888001,"ttfb":0.697935482,"dnsStart":8.283200000000001e-05,"dnsDone":0.001572922,"connectStart":0.0015815970000000001,"connectDone":0.004335918,"wroteRequest":0.52702092,"total":0.6981806340000001}
