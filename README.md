@@ -6,7 +6,7 @@ We want a tool that will happily run for long periods, as well as single-shot.
 
 Hence this, rather than curl and cron (which only gives us minute-by-minute granularity).
 
-It needs the new net/http/httptrace facility in Go 1.7.
+It needs the new `net/http/httptrace` facility in Go 1.7.
 
 ## Usage
 
