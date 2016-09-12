@@ -2,13 +2,14 @@ package main
 
 import (
 	"encoding/json"
-	flag "github.com/ogier/pflag"
 	"fmt"
 	"log"
 	"net/http"
 	"net/http/httptrace"
 	"os"
 	"time"
+
+	flag "github.com/ogier/pflag"
 
 	_ "net/http/pprof"
 )
@@ -50,7 +51,7 @@ func main() {
 
 	flag.BoolVarP(&help, "help", "h", helpDefault, helpUsage)
 
-	flag.Int64VarP(&interval, "interval", "i",  intervalDefault, intervalUsage)
+	flag.Int64VarP(&interval, "interval", "i", intervalDefault, intervalUsage)
 
 	flag.Int64VarP(&count, "count", "c", countDefault, countUsage)
 
@@ -95,6 +96,15 @@ type JSONTimestamp time.Time
 func (j *JSONTimestamp) MarshalJSON() ([]byte, error) {
 	stamp := fmt.Sprintf("\"%s\"", time.Time(*j).UTC().Format(time.RFC3339Nano))
 	return []byte(stamp), nil
+}
+
+type JSONError struct {
+	Detail string `json:detail`
+}
+
+type JSONOutput struct {
+	Data   interface{} `json:"data,omitempty"`
+	Errors []JSONError `json:"errors,omitempty"`
 }
 
 type TimingContext struct {
@@ -165,12 +175,16 @@ func doPoll(URL string, encoder *json.Encoder) {
 	tc, err := doIt(URL)
 
 	if err != nil {
-		loge(err)
+		write(encoder,
+			JSONOutput{
+				Errors: []JSONError{
+					JSONError{Detail: err.Error()},
+				},
+			})
+		return
 	}
 
-	if err := encoder.Encode(tc); err != nil {
-		loge(err)
-	}
+	write(encoder, JSONOutput{Data: tc})
 }
 
 func doIt(URL string) (*TimingContext, error) {
@@ -206,6 +220,8 @@ func doIt(URL string) (*TimingContext, error) {
 	return timingContext, nil
 }
 
-func loge(err error) {
-	fmt.Fprintln(os.Stderr, err.Error())
+func write(encoder *json.Encoder, jo JSONOutput) {
+	if err := encoder.Encode(jo); err != nil {
+		fmt.Fprintln(os.Stderr, err.Error())
+	}
 }
