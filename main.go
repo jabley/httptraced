@@ -29,9 +29,9 @@ var (
 
 const (
 	usage = `
-go-latency [options...] url
+httptraced [options...] url
 
-go-latency will make a GET request to a URL and report on the timings.
+httptraced will make a GET request to a URL and report on the timings.
 
 `
 
