@@ -3,6 +3,8 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"net/http/httptrace"
@@ -209,11 +211,15 @@ func doIt(URL string) (*TimingContext, error) {
 
 	res, err := client.Do(req)
 
-	timingContext.Total = timingContext.Elapsed()
-
 	if err != nil {
 		return nil, err
 	}
+
+	if _, err := io.Copy(ioutil.Discard, res.Body); err != nil {
+		return nil, err
+	}
+
+	timingContext.Total = timingContext.Elapsed()
 
 	res.Body.Close()
 
