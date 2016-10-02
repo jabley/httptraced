@@ -24,6 +24,7 @@ var (
 
 	// CLI flags
 	help     bool
+	version  bool
 	interval int64
 	count    int64
 )
@@ -49,13 +50,15 @@ httptraced will make a GET request to a URL and report on the timings.
 func main() {
 	// parse flags
 	flag.BoolVarP(&help, "help", "h", helpDefault, helpUsage)
-
+	flag.BoolVarP(&version, "version", "v", false, "Display the version")
 	flag.Int64VarP(&interval, "interval", "i", intervalDefault, intervalUsage)
-
 	flag.Int64VarP(&count, "count", "c", countDefault, countUsage)
 
 	flag.Parse()
 
+	if version {
+		fmt.Fprintf(os.Stderr, "httptraced: version 0.0.1\n")
+		os.Exit(1)
 	}
 
 	if help {
