@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"net/http/httptrace"
 	"os"
@@ -49,8 +48,6 @@ httptraced will make a GET request to a URL and report on the timings.
 
 func main() {
 	// parse flags
-	debug := flag.Bool("debug", false, "If true, you can debug this process at http://localhost:6060/debug/pprof/")
-
 	flag.BoolVarP(&help, "help", "h", helpDefault, helpUsage)
 
 	flag.Int64VarP(&interval, "interval", "i", intervalDefault, intervalUsage)
@@ -59,10 +56,6 @@ func main() {
 
 	flag.Parse()
 
-	if *debug {
-		go func() {
-			log.Println(http.ListenAndServe("localhost:6060", nil))
-		}()
 	}
 
 	if help {
