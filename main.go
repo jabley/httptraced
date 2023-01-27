@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/http/httptrace"
 	"os"
@@ -57,7 +56,7 @@ func main() {
 	flag.Parse()
 
 	if version {
-		fmt.Fprintf(os.Stderr, "httptraced: version 0.0.1\n")
+		_, _ = fmt.Fprintf(os.Stderr, "httptraced: version 0.0.1\n")
 		os.Exit(1)
 	}
 
@@ -85,7 +84,7 @@ func main() {
 }
 
 func showUsage() {
-	fmt.Fprintf(os.Stderr, usage)
+	_, _ = fmt.Fprintf(os.Stderr, usage)
 	flag.PrintDefaults()
 }
 
@@ -97,7 +96,7 @@ func (j *JSONTimestamp) MarshalJSON() ([]byte, error) {
 }
 
 type JSONError struct {
-	Detail string `json:detail`
+	Detail string `json:"detail"`
 }
 
 type JSONOutput struct {
@@ -176,7 +175,7 @@ func doPoll(URL string, encoder *json.Encoder) {
 		write(encoder,
 			JSONOutput{
 				Errors: []JSONError{
-					JSONError{Detail: err.Error()},
+					{Detail: err.Error()},
 				},
 			})
 		return
@@ -211,19 +210,19 @@ func doIt(URL string) (*TimingContext, error) {
 		return nil, err
 	}
 
-	if _, err := io.Copy(ioutil.Discard, res.Body); err != nil {
+	if _, err := io.Copy(io.Discard, res.Body); err != nil {
 		return nil, err
 	}
 
 	timingContext.Total = timingContext.Elapsed()
 
-	res.Body.Close()
+	_ = res.Body.Close()
 
 	return timingContext, nil
 }
 
 func write(encoder *json.Encoder, jo JSONOutput) {
 	if err := encoder.Encode(jo); err != nil {
-		fmt.Fprintln(os.Stderr, err.Error())
+		_, _ = fmt.Fprintln(os.Stderr, err.Error())
 	}
 }
