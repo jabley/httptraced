@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/jabley/httptraced.svg?branch=master)](https://travis-ci.org/jabley/httptraced)
+![Build Status](https://github.com/jabley/httptraced/actions/workflows/go.yml/badge.svg)
 
 Tool to monitor connection latency.
 
