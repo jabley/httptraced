@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -115,6 +116,8 @@ type TimingContext struct {
 	ConnectStart         float64       `json:"connectStart"`
 	ConnectDone          float64       `json:"connectDone"`
 	WroteRequest         float64       `json:"wroteRequest"`
+	TLSHandshakeStart    float64       `json:"tlsHandshakeStart"`
+	TLSHandshakeDone     float64       `json:"tlsHandshakeDone"`
 	Total                float64       `json:"total"`
 }
 
@@ -202,6 +205,12 @@ func doIt(URL string) (*TimingContext, error) {
 		ConnectStart:         func(network, addr string) { timingContext.ConnectStart = timingContext.Elapsed() },
 		ConnectDone:          func(network, addr string, err error) { timingContext.ConnectDone = timingContext.Elapsed() },
 		WroteRequest:         func(e httptrace.WroteRequestInfo) { timingContext.WroteRequest = timingContext.Elapsed() },
+		TLSHandshakeStart:    func() { timingContext.TLSHandshakeStart = timingContext.Elapsed() },
+		TLSHandshakeDone: func(_cs tls.ConnectionState, err error) {
+			if err == nil {
+				timingContext.TLSHandshakeDone = timingContext.Elapsed()
+			}
+		},
 	}))
 
 	res, err := client.Do(req)
